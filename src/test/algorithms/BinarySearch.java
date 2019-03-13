@@ -26,4 +26,10 @@ class BinarySearch {
     void testBinarySearch() {
         assertEquals(1, arrayList.get(0));
     }
+
+    @Test
+    void testBinarySearch2() {
+        assertEquals(1, arrayList.get(0));
+    }
+
 }
