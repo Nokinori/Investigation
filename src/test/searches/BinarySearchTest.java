@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.nokinori.utils.Util.toArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -53,9 +54,5 @@ class BinarySearchTest {
 
         int search = new BinarySearch().binarySearch(toArray(arrayList), searchedElement);
         assertEquals(-1, search);
-    }
-
-    private int[] toArray(List<Integer> list) {
-        return list.stream().mapToInt(Integer::intValue).toArray();
     }
 }
