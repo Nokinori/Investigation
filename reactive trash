@@ -1,0 +1,192 @@
+class ReactiveStreamsTest {
+
+    @Test
+    fun `get Item`() {
+        val publisher = ArrPublisher(listOf(1, 2, 3, 4, 5, 6, 7))
+        val subscriber = ArrSubscriber<Any>()
+
+        Flux.from(publisher)
+            .map {
+                println("it = ${it}")
+                it
+            }
+            .filter { it / 2L == 0L }
+            .subscribe(subscriber)
+    }
+
+    @Test
+    fun `my operator`() {
+        MapPublisher(
+            MapPublisher(
+                ArrPublisher(listOf(1L, 2L, 3L)),
+                Function<Long, String> {
+                    println("in map inner")
+                    it.toString()
+                }
+            ), Function<String, Long> { it: String ->
+                println("im map out")
+                it.toLong()
+            }
+        )
+            .subscribe(ArrSubscriber())
+    }
+
+    @Test
+    fun `my flow`() {
+        Flow.fromArray<Long>(listOf(1, 2, 3))
+            .map(Function<Long, String> {
+                println("in map 1")
+                it.toString()
+            })
+            .map(Function<String, Int> {
+                println("in map 2")
+                it.toInt()
+            })
+            .subscribe(ArrSubscriber())
+    }
+}
+
+class ArrSubscriber<T> : Subscriber<T> {
+    lateinit var s: Subscription
+
+    override fun onComplete() {
+        println("ReactiveStreamsTest.onComplete")
+    }
+
+    override fun onSubscribe(s: Subscription) {
+        println("ReactiveStreamsTest.onSubscribe")
+        this.s = s
+        s.request(3)
+    }
+
+    override fun onNext(t: T) {
+        println("ReactiveStreamsTest.onNext $t")
+        s.request(1)
+    }
+
+    override fun onError(t: Throwable) {
+        println("ArrSubcriber.onError")
+        throw t
+    }
+
+}
+
+class ArrPublisher<T>(private val array: List<T>) : Flow<T>() {
+
+    override fun subscribe(subscriber: Subscriber<in T>) {
+        println("ArrPublisher.subscribe")
+        subscriber.onSubscribe(ArrSubscription(subscriber, array))
+    }
+
+}
+
+class ArrSubscription<T>(
+    private val subscriber: Subscriber<in T>,
+    private val array: List<T>
+) : Subscription {
+    private var lastIndex: Int = 0
+    var requested = 0
+    var canceled = false
+
+    override fun cancel() {
+        canceled = true
+    }
+
+    override fun request(n: Long) {
+        try {
+
+            if (canceled) return
+
+            val inital = requested
+
+            requested += n.toInt()
+
+            if (inital != 0) return
+
+            var sent = 0
+            val array = array.subList(lastIndex, array.size)
+
+            if (array.size == lastIndex) {
+                subscriber.onComplete()
+                return
+            }
+
+            while (sent < requested && lastIndex in array.indices) {
+                subscriber.onNext(array[lastIndex])
+                sent++
+                lastIndex++
+            }
+        } catch (t: Throwable) {
+            subscriber.onError(t)
+        }
+    }
+
+}
+
+class MapSubscriber<IN, OUT>(
+    private val mapper: Function<in IN, out OUT>,
+    private val actual: Subscriber<OUT>
+) : Subscriber<IN>, Subscription {
+
+    lateinit var upstream: Subscription
+    var terminated: Boolean = false
+
+
+    override fun onComplete() {
+        if (terminated) return
+        actual.onComplete()
+    }
+
+    override fun onSubscribe(s: Subscription) {
+        this.upstream = s
+        actual.onSubscribe(s)
+    }
+
+    override fun onNext(input: IN) {
+        if (terminated) return
+
+        try {
+            val out: OUT = mapper.apply(input)
+            actual.onNext(out)
+        } catch (e: Throwable) {
+            cancel()
+            onError(e)
+            return
+        }
+    }
+
+    override fun onError(t: Throwable?) {
+        if (terminated) return
+        actual.onError(t)
+    }
+
+    override fun cancel() {
+        upstream.cancel()
+    }
+
+    override fun request(n: Long) {
+        upstream.request(n)
+    }
+}
+
+class MapPublisher<IN, OUT>(
+    private val parent: Publisher<IN>,
+    private val mapper: Function<IN, OUT>
+) : Flow<OUT>() {
+
+    override fun subscribe(actual: Subscriber<in OUT>) {
+        parent.subscribe(MapSubscriber(mapper, actual))
+    }
+}
+
+abstract class Flow<T> : Publisher<T> {
+
+
+    fun <R> map(mapper: Function<T, R>): Flow<R> = MapPublisher(this, mapper)
+
+    companion object {
+
+        fun <T> fromArray(elements: List<T>): ArrPublisher<T> = ArrPublisher(elements)
+
+    }
+}
