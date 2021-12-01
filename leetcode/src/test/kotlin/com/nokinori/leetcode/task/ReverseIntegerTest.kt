@@ -25,22 +25,13 @@ internal class ReverseIntegerTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun provideArguments(): Stream<Arguments> = Stream
+        fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCaseImpl(input = 123, expect = 321),
-                TestCaseImpl(input = -123, expect = -321),
-                TestCaseImpl(input = 120, expect = 21),
-                TestCaseImpl(input = 0, expect = 0),
-                TestCaseImpl(input = 1534236469, expect = 0),
+                TestCase.create(input = 123, expect = 321),
+                TestCase.create(input = -123, expect = -321),
+                TestCase.create(input = 120, expect = 21),
+                TestCase.create(input = 0, expect = 0),
+                TestCase.create(input = 1534236469, expect = 0),
             )
-            .map { it.asArguments() }
-
-    }
-
-    data class TestCaseImpl(
-        override val input: Int,
-        override val expect: Int
-    ) : TestCase<Int, Int> {
-        override fun asArguments(): Arguments = Arguments.arguments(input, expect)
     }
 }

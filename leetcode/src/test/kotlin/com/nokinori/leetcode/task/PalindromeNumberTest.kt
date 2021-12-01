@@ -25,26 +25,17 @@ internal class PalindromeNumberTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun provideArguments(): Stream<Arguments> = Stream
+        fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCaseImpl(input = 121, expect = true),
-                TestCaseImpl(input = 1234321, expect = true),
-                TestCaseImpl(input = -121, expect = false),
-                TestCaseImpl(input = 10, expect = false),
-                TestCaseImpl(input = -101, expect = false),
-                TestCaseImpl(input = 1223, expect = false),
-                TestCaseImpl(input = 0, expect = true),
-                TestCaseImpl(input = 1, expect = true),
-                TestCaseImpl(input = 11, expect = true),
+                TestCase.create(input = 121, expect = true),
+                TestCase.create(input = 1234321, expect = true),
+                TestCase.create(input = -121, expect = false),
+                TestCase.create(input = 10, expect = false),
+                TestCase.create(input = -101, expect = false),
+                TestCase.create(input = 1223, expect = false),
+                TestCase.create(input = 0, expect = true),
+                TestCase.create(input = 1, expect = true),
+                TestCase.create(input = 11, expect = true),
             )
-            .map { it.asArguments() }
-
-    }
-
-    data class TestCaseImpl(
-        override val input: Int,
-        override val expect: Boolean
-    ) : TestCase<Int, Boolean> {
-        override fun asArguments(): Arguments = Arguments.arguments(input, expect)
     }
 }

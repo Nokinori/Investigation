@@ -20,39 +20,31 @@ internal class LongestSubstringWithoutRepeatingTest {
         @JvmStatic
         fun provideArguments(): Stream<Arguments> = Stream
             .of(
-                TestCaseImpl(
+                TestCase.create(
                     input = "abcabcbb",
                     expect = 3
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = "bbbbb",
                     expect = 1
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = "pwwkew",
                     expect = 3
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = "",
                     expect = 0
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = "aab",
                     expect = 2
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = "dvdf",
                     expect = 3
                 )
             )
             .map { it.asArguments() }
-    }
-
-
-    data class TestCaseImpl(
-        override val input: String,
-        override val expect: Int
-    ) : TestCase<String, Int> {
-        override fun asArguments(): Arguments = Arguments.arguments(input, expect)
     }
 }

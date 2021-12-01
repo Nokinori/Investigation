@@ -20,22 +20,13 @@ internal class LongestPalindromicSubstringTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun provideArguments(): Stream<Arguments> = Stream
+        fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCaseImpl(input = "babad", expect = "bab"),
-                TestCaseImpl(input = "cbbd", expect = "bb"),
-                TestCaseImpl(input = "a", expect = "a"),
-                TestCaseImpl(input = "ac", expect = "a"),
-                TestCaseImpl(input = "", expect = ""),
+                TestCase.create(input = "babad", expect = "bab"),
+                TestCase.create(input = "cbbd", expect = "bb"),
+                TestCase.create(input = "a", expect = "a"),
+                TestCase.create(input = "ac", expect = "a"),
+                TestCase.create(input = "", expect = ""),
             )
-            .map { it.asArguments() }
-
-    }
-
-    data class TestCaseImpl(
-        override val input: String,
-        override val expect: String
-    ) : TestCase<String, String> {
-        override fun asArguments(): Arguments = Arguments.arguments(input, expect)
     }
 }

@@ -18,37 +18,29 @@ internal class MedianOfTwoSortedArraysTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun provideArguments(): Stream<Arguments> = Stream
+        fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCaseImpl(
+                TestCase.create(
                     input = listOf(1, 3) to listOf(2),
                     expect = 2.0
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = listOf(1, 2) to listOf(3, 4),
                     expect = 2.5
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = listOf(0, 0) to listOf(0, 0),
                     expect = 0.0
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = emptyList<Int>() to listOf(1),
                     expect = 1.0
                 ),
-                TestCaseImpl(
-                    input = listOf(2) to emptyList(),
+                TestCase.create(
+                    input = listOf(2) to emptyList<Int>(),
                     expect = 2.0
                 ),
             )
-            .map { it.asArguments() }
 
-    }
-
-    data class TestCaseImpl(
-        override val input: Pair<List<Int>, List<Int>>,
-        override val expect: Double
-    ) : TestCase<Pair<List<Int>, List<Int>>, Double> {
-        override fun asArguments(): Arguments = Arguments.arguments(input.first, input.second, expect)
     }
 }

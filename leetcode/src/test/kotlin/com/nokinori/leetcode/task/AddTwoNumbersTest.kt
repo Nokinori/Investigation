@@ -32,26 +32,25 @@ internal class AddTwoNumbersTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun provideArguments(): Stream<Arguments> = Stream
+        fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCaseImpl(
+                TestCase.create(
                     input = ListNode(1) to ListNode(2),
                     expect = ListNode(3)
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = asListNodes(2, 4, 3) to asListNodes(5, 6, 4),
                     expect = asListNodes(7, 0, 8)
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = asListNodes(1, 2, 3, 4, 5, 6, 7, 8, 9) to asListNodes(9, 8, 7, 6, 5, 4, 3, 2, 1),
                     expect = asListNodes(0, 1, 1, 1, 1, 1, 1, 1, 1, 1)
                 ),
-                TestCaseImpl(
+                TestCase.create(
                     input = asListNodes(6, 5, 4) to asListNodes(4, 4, 4),
                     expect = asListNodes(0, 0, 9)
                 )
             )
-            .map { it.asArguments() }
 
 
         private fun asListNodes(vararg ints: Int): ListNode {
@@ -63,13 +62,5 @@ internal class AddTwoNumbersTest {
                 }
             return dummyHead.next!!
         }
-    }
-
-
-    data class TestCaseImpl(
-        override val input: Pair<ListNode, ListNode>,
-        override val expect: ListNode
-    ) : TestCase<Pair<ListNode, ListNode>, ListNode> {
-        override fun asArguments(): Arguments = Arguments.arguments(input.first, input.second, expect)
     }
 }

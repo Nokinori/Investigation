@@ -1,4 +1,4 @@
-package com.nokinori.leetcode.task
+package com.nokinori.leetcode.task.template
 
 import com.nokinori.leetcode.TestCase
 import org.assertj.core.api.Assertions
@@ -7,11 +7,11 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-internal class ZigZagConversionTest {
+internal class SolutionTest {
     @ParameterizedTest
     @MethodSource("provideArguments")
-    fun simpleSolution(string: String, numRows: Int, expect: String) {
-        val result = ZigZagConversion.convert(string, numRows)
+    fun simpleSolution(input: Int, expect: Int) {
+        val result = Solution.solution(input)
         Assertions.assertThat(result).isEqualTo(expect)
     }
 
@@ -20,9 +20,7 @@ internal class ZigZagConversionTest {
         @JvmStatic
         fun provideArguments(): Stream<Arguments> = TestCase
             .of(
-                TestCase.create(input = "PAYPALISHIRING" to 3, expect = "PAHNAPLSIIGYIR"),
-                TestCase.create(input = "PAYPALISHIRING" to 4, expect = "PINALSIGYAHRPI"),
-                TestCase.create(input = "A" to 1, expect = "A"),
+                TestCase.create(input = 1, expect = 1)
             )
     }
 }
